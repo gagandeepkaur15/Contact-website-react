@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'; //useEffect for persisting data
+import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import Header from "./Header";
 import AddContact from "./AddContact";
@@ -25,8 +26,16 @@ function App() {
 
   const addContactHandler = (contact) => {
     console.log(contact);
-    setContacts([...contacts, contact]);
+    // setContacts([...contacts, contact]);
+    setContacts([...contacts, {id: uuidv4(), ...contact}]);
   };
+
+   const removeContactHandler = (id) => {
+    const newContactList = contacts.filter((contact)=>{
+      return contact.id !== id;
+    });
+    setContacts(newContactList);
+   }
 
   //To retrieve contacts from browsers local storage
   useEffect(()=>{
@@ -43,7 +52,7 @@ function App() {
     <div className='ui container'>
       <Header />
       <AddContact addContactHandler={addContactHandler} /> {/* handler to receive state from child */}
-      <ContactList contacts={contacts}/> {/* Passed contacts array as a prop from parent to child */}
+      <ContactList contacts={contacts} getContactId={removeContactHandler} /> {/* Passed contacts array as a prop from parent to child */}
     </div>
   );
 }
